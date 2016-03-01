@@ -27,8 +27,8 @@ module Mapping
 			PREFIX + klass.name.gsub(/::/, '_')
 		end
 		
-		def method_for_mapping(klass)
-			self.class.method_for_mapping(klass)
+		def method_for_mapping(object)
+			self.class.method_for_mapping(object.class)
 		end
 		
 		def self.map(klass, &block)
@@ -44,10 +44,10 @@ module Mapping
 			hash
 		end
 		
-		def map(root)
-			method_name = self.method_for_mapping(root.class)
+		def map(root, *args)
+			method_name = self.method_for_mapping(root)
 
-			self.send(method_name, root)
+			self.send(method_name, root, *args)
 		end
 	end
 end

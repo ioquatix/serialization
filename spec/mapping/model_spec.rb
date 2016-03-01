@@ -49,13 +49,12 @@ module Mapping::ModelSpec
 			}
 		end
 	end
-
+	
 	RSpec.describe Mapping::Model do
+		let(:person) {Human::Person.new('Bob Jones', 200, [Human::Possession.new('Vase', '$20')])}
+		
 		it 'can map with base class' do
 			model = MappingModelV1.new
-			
-			person = Human::Person.new('Bob Jones', 200, [])
-			person.posessions << Human::Possession.new('Vase', '$20')
 			
 			expect(model.map(person)).to be == {
 				name: 'Bob Jones',
@@ -66,9 +65,6 @@ module Mapping::ModelSpec
 		it 'can map with derived class' do
 			model = MappingModelV2.new
 			
-			person = Human::Person.new('Bob Jones', 200, [])
-			person.posessions << Human::Possession.new('Vase', '$20')
-			
 			expect(model.map(person)).to be == {
 				name: 'Bob Jones',
 				age: 200, 
@@ -76,6 +72,28 @@ module Mapping::ModelSpec
 					{name: 'Vase', value: '$20'}
 				]
 			}
+		end
+	end
+	
+	class DateMapping < Mapping::Model
+		map(Time) do |date, offset: nil|
+			if offset
+				date.localtime(offset)
+			else
+				date
+			end
+		end
+	end
+	
+	RSpec.describe DateMapping do
+		let(:time) {Time.now}
+		
+		it 'can map without timezone option' do
+			expect(subject.map(time)).to be == time
+		end
+		
+		it 'can map with timezone option' do
+			expect(subject.map(time, offset: 0)).to be == time.gmtime
 		end
 	end
 end
