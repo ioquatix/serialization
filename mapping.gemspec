@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
 	spec.authors       = ["Samuel Williams"]
 	spec.email         = ["samuel.williams@oriontransfer.co.nz"]
 
-	spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-	spec.description   = %q{TODO: Write a longer description or delete this line.}
-	spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+	spec.summary       = %q{Map an input model to an output model using a mapping model.}
+	spec.description   = %q{Map model objects based on their class to a given output model. Useful for versioning external interfaces (e.g. JSON APIs) or processing structured data from one format to another.}
+	spec.homepage      = "https://github.com/ioquatix/mapping"
 
 	spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
 	spec.bindir        = "exe"
