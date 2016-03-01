@@ -96,4 +96,12 @@ module Mapping::ModelSpec
 			expect(subject.map(time, offset: 0)).to be == time.gmtime
 		end
 	end
+	
+	RSpec.describe Mapping::Model do
+		let(:hash) {Hash.new(x: 10, y: 20)}
+		
+		it 'can map a hash' do
+			expect(subject.map(hash)).to be == hash
+		end
+	end
 end
