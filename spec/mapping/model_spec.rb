@@ -100,8 +100,24 @@ module Mapping::ModelSpec
 	RSpec.describe Mapping::Model do
 		let(:hash) {Hash.new(x: 10, y: 20)}
 		
+		it 'can map an array' do
+			expect(subject.map([])).to be == []
+		end
+		
 		it 'can map a hash' do
 			expect(subject.map(hash)).to be == hash
+		end
+		
+		it 'can map true' do
+			expect(subject.map(true)).to be == true
+		end
+		
+		it 'can map false' do
+			expect(subject.map(false)).to be == false
+		end
+		
+		it 'can map nil' do
+			expect(subject.map(nil)).to be == nil
 		end
 	end
 end

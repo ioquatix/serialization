@@ -36,6 +36,18 @@ module Mapping
 			define_method(method_name, &block)
 		end
 		
+		map(NilClass) do |object|
+			nil
+		end
+		
+		map(TrueClass) do |object|
+			true
+		end
+		
+		map(FalseClass) do |object|
+			false
+		end
+		
 		map(Array) do |items|
 			items.collect{|object| map(object)}
 		end
@@ -45,6 +57,7 @@ module Mapping
 		end
 		
 		def map(root, *args)
+
 			method_name = self.method_for_mapping(root)
 
 			self.send(method_name, root, *args)
