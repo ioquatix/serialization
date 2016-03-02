@@ -57,7 +57,6 @@ module Mapping
 		end
 		
 		def map(root, *args)
-
 			method_name = self.method_for_mapping(root)
 
 			self.send(method_name, root, *args)
