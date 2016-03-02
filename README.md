@@ -70,7 +70,7 @@ class APIv1 < Mapping::Model
 	end
 end
 
-class APIv2 < MappingModelV1
+class APIv2 < APIv1
 	map(Human::Person) do |object|
 		super.merge(
 			posessions: self.map(object.posessions)
