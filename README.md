@@ -6,6 +6,35 @@ The mapping gem is a structured system for mapping one model to another, using a
 [![Code Climate](https://codeclimate.com/github/ioquatix/mapping.svg)](https://codeclimate.com/github/ioquatix/mapping)
 [![Coverage Status](https://coveralls.io/repos/ioquatix/mapping/badge.svg)](https://coveralls.io/r/ioquatix/mapping)
 
+## Motivation
+
+I've been thinking (and designing) versioned APIs which serve their data primarily from `ActiveRecord` models. Initially we have been using `as_json/serializable_hash/to_json` where it made sense. 
+
+	records.as_json
+
+This was fine for really simple models and APIs. However, as things get more complex, this approach gets cumbersome:
+
+	records.as_json(
+		only: [:id, :name, :image, :longitude, :latitude],
+		include: [:major_category, :categories],
+	)
+
+We need versioned, internationalized APIs which don't always directly match up to the underlying database models, or in some cases the underlying models change but the API should remain stable (e.g. column renamed, tables changed).
+
+	# image attribute was renamed to image_url, how do we version the response?
+	records.as_json(
+		only: [:id, :name, :image_url, :longitude, :latitude],
+		include: [:major_category, :categories],
+	)
+
+It's also not obvious how to inject methods that take arguments, or even handle per-request state (e.g. `Accept-Language`). Even if it is possible (e.g. using a lambda) I'm not sure that this approach is really desirable - the argument list is becoming impossibly complex: Possibly buggy, hard to reuse, test and difficult to document.
+
+[ActiveModel::Serializers](https://github.com/rails-api/active_model_serializers) looks awesome at first but ultimately seems like an over-engineered version of `as_json`. It **directly** depends on globally defined models which makes versioning hard and doesn't provide any obvious way to inject per-request state (e.g. language). It [clutters up existing models and splits serialization concerns over multiple classes](http://programmingisterrible.com/post/139222674273/write-code-that-is-easy-to-delete-not-easy-to-extend). It's implementation is difficult to understand, it has a large surface area, and it doesn't really address the major concerns regarding versioning, stability and (per-request) state.
+
+I've implemented a [framework for Objective-C many years ago](https://github.com/oriontransfer/SWXMLMapping) which exposes a single primary concept: a mapping model. A mapping model is an object which describes the process mapping an input model (e.g. an `ActiveRecord` model) to an output model (e.g. a hash suitable for `JSON::generate`). A mapping model is entirely isolated from state which is not directly related to the mapping process itself. Because of this, multiple models can co-exist, and the models themselves can be versioned, localized, or whatever else necessary to perform a suitable mapping. It's easy to remove a model if it's no longer being used as all the code is in one place. It's easy to test a mapping model in isolation. Models can be documented like normal code. They can be reused and composed together easily.
+
+The design of this library is centered around being explicit where being explicit makes life easier in the long term.
+
 ## Installation
 
 Add this line to your application's Gemfile:
