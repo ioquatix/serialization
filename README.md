@@ -61,7 +61,7 @@ module Human
 end
 
 # Your mapping model:
-class APIv1 < Mapping::Model
+class APIv1 < Mapping::ObjectModel
 	map(Human::Person) do |object|
 		{
 			name: object.name,
@@ -99,6 +99,10 @@ expect(model.map(person)).to be == {
 	age: 200
 }
 ```
+
+### Model vs ObjectModel
+
+The base `Mapping::Model` class provides only the basic structure required to create and invoke mapping methods. The `Mapping::ObjectModel` provides a few default mappings for `true`, `false`, `nil`, `Array` and `Hash`.
 
 ## Contributing
 

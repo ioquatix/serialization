@@ -21,60 +21,6 @@
 require 'mapping/model'
 
 module Mapping::ModelSpec
-	module Human
-		Person = Struct.new(:name, :age, :posessions)
-		Possession = Struct.new(:name, :value)
-	end
-	
-	class MappingModelV1 < Mapping::Model
-		map(Human::Person) do |object|
-			{
-				name: object.name,
-				age: object.age,
-			}
-		end
-	end
-	
-	class MappingModelV2 < MappingModelV1
-		map(Human::Person) do |object|
-			super(object).merge(
-				posessions: self.map(object.posessions)
-			)
-		end
-		
-		map(Human::Possession) do |object|
-			{
-				name: object.name,
-				value: object.value,
-			}
-		end
-	end
-	
-	RSpec.describe Mapping::Model do
-		let(:person) {Human::Person.new('Bob Jones', 200, [Human::Possession.new('Vase', '$20')])}
-		
-		it 'can map with base class' do
-			model = MappingModelV1.new
-			
-			expect(model.map(person)).to be == {
-				name: 'Bob Jones',
-				age: 200
-			}
-		end
-		
-		it 'can map with derived class' do
-			model = MappingModelV2.new
-			
-			expect(model.map(person)).to be == {
-				name: 'Bob Jones',
-				age: 200, 
-				posessions: [
-					{name: 'Vase', value: '$20'}
-				]
-			}
-		end
-	end
-	
 	class DateMapping < Mapping::Model
 		map(Time) do |date, offset: nil|
 			if offset
@@ -84,7 +30,7 @@ module Mapping::ModelSpec
 			end
 		end
 	end
-	
+
 	RSpec.describe DateMapping do
 		let(:time) {Time.now}
 		
@@ -94,30 +40,6 @@ module Mapping::ModelSpec
 		
 		it 'can map with timezone option' do
 			expect(subject.map(time, offset: 0)).to be == time.gmtime
-		end
-	end
-	
-	RSpec.describe Mapping::Model do
-		let(:hash) {Hash.new(x: 10, y: 20)}
-		
-		it 'can map an array' do
-			expect(subject.map([])).to be == []
-		end
-		
-		it 'can map a hash' do
-			expect(subject.map(hash)).to be == hash
-		end
-		
-		it 'can map true' do
-			expect(subject.map(true)).to be == true
-		end
-		
-		it 'can map false' do
-			expect(subject.map(false)).to be == false
-		end
-		
-		it 'can map nil' do
-			expect(subject.map(nil)).to be == nil
 		end
 	end
 end

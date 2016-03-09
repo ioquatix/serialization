@@ -18,28 +18,28 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-module Mapping
-	class Model
-		PREFIX = 'map_'.freeze
-		
-		# This function generates mapping names like `map_Array` and `map_Hash` which while a bit non-standard are perfectly fine for our purposes and this never really needs to leak.
-		def self.method_for_mapping(klass)
-			PREFIX + klass.name.gsub(/::/, '_')
-		end
-		
-		def method_for_mapping(object)
-			self.class.method_for_mapping(object.class)
-		end
-		
-		def self.map(klass, &block)
-			method_name = self.method_for_mapping(klass)
-			define_method(method_name, &block)
-		end
-		
-		def map(root, *args)
-			method_name = self.method_for_mapping(root)
+require_relative 'model'
 
-			self.send(method_name, root, *args)
+module Mapping
+	class ObjectModel < Model
+		map(NilClass) do |object|
+			nil
+		end
+		
+		map(TrueClass) do |object|
+			true
+		end
+		
+		map(FalseClass) do |object|
+			false
+		end
+		
+		map(Array) do |items|
+			items.collect{|object| map(object)}
+		end
+		
+		map(Hash) do |hash|
+			hash
 		end
 	end
 end
