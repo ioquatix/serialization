@@ -42,4 +42,24 @@ module Mapping::ModelSpec
 			expect(subject.map(time, offset: 0)).to be == time.gmtime
 		end
 	end
+	
+	class LowerCaseMapping < Mapping::Model
+		map(String) {|string| string.downcase}
+	end
+	
+	RSpec.describe LowerCaseMapping do
+		it 'can map string' do
+			expect(subject.map("FOO")).to be == "foo"
+		end
+	end
+	
+	class EmptyMapping < LowerCaseMapping
+		unmap(String)
+	end
+	
+	RSpec.describe EmptyMapping do
+		it 'can remove a mapped method' do
+			expect{subject.map("foo")}.to raise_error(NoMethodError)
+		end
+	end
 end

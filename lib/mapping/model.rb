@@ -36,6 +36,11 @@ module Mapping
 			define_method(method_name, &block)
 		end
 		
+		def self.unmap(klass)
+			method_name = self.method_for_mapping(klass)
+			undef_method(method_name)
+		end
+		
 		def map(root, *args)
 			method_name = self.method_for_mapping(root)
 
