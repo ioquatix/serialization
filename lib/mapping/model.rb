@@ -27,23 +27,34 @@ module Mapping
 			PREFIX + klass.name.gsub(/::/, '_')
 		end
 		
+		# Get the name of the method for mapping the given object.
 		def method_for_mapping(object)
 			self.class.method_for_mapping(object.class)
 		end
 		
+		# Add a mapping from a given input class to a specific block.
 		def self.map(klass, &block)
 			method_name = self.method_for_mapping(klass)
 			define_method(method_name, &block)
 		end
 		
+		# Sometimes you just want to map things to themselves (the identity function). This makes it convenient to specify a lot of identity mappings.
+		def self.map_identity(*klasses)
+			klasses.each do |klass|
+				self.map(klass) {|value| value}
+			end
+		end
+		
+		# Remove a mapping, usually an inherited one, which you don't want.
 		def self.unmap(klass)
 			method_name = self.method_for_mapping(klass)
 			undef_method(method_name)
 		end
 		
+		# The primary function, which maps an input object to an output object.
 		def map(root, *args)
 			method_name = self.method_for_mapping(root)
-
+			
 			self.send(method_name, root, *args)
 		end
 	end

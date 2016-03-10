@@ -21,25 +21,16 @@
 require_relative 'model'
 
 module Mapping
+	# Provides a useful starting point for object based mappings. Handles, true, false, nil, Array and Hash by default, simply by passing through.
 	class ObjectModel < Model
-		map(NilClass) do |object|
-			nil
-		end
-		
-		map(TrueClass) do |object|
-			true
-		end
-		
-		map(FalseClass) do |object|
-			false
-		end
+		map_identity(NilClass, TrueClass, FalseClass, Fixnum, Bignum, Float, Rational, String)
 		
 		map(Array) do |items|
 			items.collect{|object| map(object)}
 		end
 		
 		map(Hash) do |hash|
-			hash
+			hash.inject(Hash.new) { |output, (key, value)| output[key] = map(value); output  }
 		end
 	end
 end

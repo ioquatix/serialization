@@ -45,6 +45,7 @@ module Mapping::ModelSpec
 	
 	class LowerCaseMapping < Mapping::Model
 		map(String) {|string| string.downcase}
+		map(Fixnum) {|fixnum| fixnum.to_s}
 	end
 	
 	RSpec.describe LowerCaseMapping do
@@ -60,6 +61,10 @@ module Mapping::ModelSpec
 	RSpec.describe EmptyMapping do
 		it 'can remove a mapped method' do
 			expect{subject.map("foo")}.to raise_error(NoMethodError)
+		end
+		
+		it 'can still call super' do
+			expect(subject.map(10)).to be == "10"
 		end
 	end
 end
