@@ -45,7 +45,7 @@ module Mapping::ModelSpec
 	
 	class LowerCaseMapping < Mapping::Model
 		map(String) {|string| string.downcase}
-		map(Fixnum) {|fixnum| fixnum.to_s}
+		map(Float) {|float| float.to_s}
 	end
 	
 	RSpec.describe LowerCaseMapping do
@@ -64,7 +64,7 @@ module Mapping::ModelSpec
 		end
 		
 		it 'can still call super' do
-			expect(subject.map(10)).to be == "10"
+			expect(subject.map(10.0)).to be == "10.0"
 		end
 	end
 end

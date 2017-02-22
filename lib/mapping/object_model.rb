@@ -23,7 +23,15 @@ require_relative 'model'
 module Mapping
 	# Provides a useful starting point for object based mappings. Handles, true, false, nil, Array and Hash by default, simply by passing through.
 	class ObjectModel < Model
-		map_identity(NilClass, TrueClass, FalseClass, Fixnum, Bignum, Float, Rational, String)
+		map_identity(NilClass, TrueClass, FalseClass, Float, Rational, String)
+		
+		if 0.class == Integer
+			# Ruby 2.4+ Integer unification
+			map_identity(Integer)
+		else
+			# Ruby < 2.4
+			map_identity(Fixnum, Bignum)
+		end
 		
 		map(Array) do |items|
 			items.collect{|object| map(object)}
