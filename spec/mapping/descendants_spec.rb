@@ -1,4 +1,4 @@
-# Copyright, 2016, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,19 +18,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'model'
+require 'mapping/descendants'
 
-module Mapping
-	# Provides a useful starting point for object based mappings. Handles, true, false, nil, Array and Hash by default, simply by passing through.
-	class ObjectModel < Model
-		map_identity(NilClass, TrueClass, FalseClass, String, *Mapping.lookup_descendants(Numeric))
-		
-		map(Array) do |items|
-			items.collect{|object| map(object)}
-		end
-		
-		map(Hash) do |hash|
-			hash.inject(Hash.new) { |output, (key, value)| output[key] = map(value); output  }
-		end
+RSpec.describe Numeric do
+	let(:descendants) {Mapping.lookup_descendants(described_class)}
+	
+	it 'has several descendants' do
+		expect(descendants).to_not be_empty
 	end
 end
