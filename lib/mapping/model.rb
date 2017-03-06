@@ -33,22 +33,24 @@ module Mapping
 		end
 		
 		# Add a mapping from a given input class to a specific block.
-		def self.map(klass, &block)
-			method_name = self.method_for_mapping(klass)
-			define_method(method_name, &block)
+		def self.map(*klasses, &block)
+			klasses.each do |klass|
+				method_name = self.method_for_mapping(klass)
+				define_method(method_name, &block)
+			end
 		end
 		
 		# Sometimes you just want to map things to themselves (the identity function). This makes it convenient to specify a lot of identity mappings.
 		def self.map_identity(*klasses)
-			klasses.each do |klass|
-				self.map(klass) {|value| value}
-			end
+			self.map(*klasses) {|value| value}
 		end
 		
 		# Remove a mapping, usually an inherited one, which you don't want.
-		def self.unmap(klass)
-			method_name = self.method_for_mapping(klass)
-			undef_method(method_name)
+		def self.unmap(*klasses)
+			klasses.each do |klass|
+				method_name = self.method_for_mapping(klass)
+				undef_method(method_name)
+			end
 		end
 		
 		# The primary function, which maps an input object to an output object.
