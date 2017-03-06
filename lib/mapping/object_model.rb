@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 
 require_relative 'model'
+require_relative 'descendants'
 
 module Mapping
 	# Provides a useful starting point for object based mappings. Handles, true, false, nil, Array and Hash by default, simply by passing through.
