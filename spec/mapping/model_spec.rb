@@ -22,7 +22,7 @@ require 'mapping/model'
 
 module Mapping::ModelSpec
 	class DateMapping < Mapping::Model
-		map(Time) do |date, offset: nil|
+		map(Time) do |date, offset = nil|
 			if offset
 				date.localtime(offset)
 			else
@@ -39,7 +39,7 @@ module Mapping::ModelSpec
 		end
 		
 		it 'can map with timezone option' do
-			expect(subject.map(time, offset: 0)).to be == time.gmtime
+			expect(subject.map(time, offset = 0)).to be == time.gmtime
 		end
 	end
 	
